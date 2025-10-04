@@ -140,10 +140,10 @@ export default function LoginPage() {
                   </button>
                   <button type="submit" className="btn btn-success" disabled={forgotLoading}>
                     {forgotLoading ? (
-                      <>
+                      <div>
                         <span className="spinner-border spinner-border-sm me-2"></span>
                         Sending...
-                      </>
+                      </div>
                     ) : (
                       "Send Reset Link"
                     )}
