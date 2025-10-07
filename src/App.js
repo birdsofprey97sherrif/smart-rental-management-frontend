@@ -56,7 +56,7 @@ import TenantPaymentPage from "./components/TenantPaymentsPage";
 
 // Landlord Components
 import LandlordSidebarLayout from "./components/LandlordSidebarLayout";
-import LandlordDashboard from "./components/LandlordDashboard";
+import LandlordDashboardPage from "./components/LandlordDashboardPage";
 import HouseManagementTable from "./components/HouseManagementTable";
 import HouseUploadForm from "./components/HouseUploadForm";
 import TenantManagement from "./components/TenantManagement";
@@ -130,7 +130,7 @@ function App() {
 
               {/* Landlord Routes */}
               <Route path="/landlord"element={<ProtectedRoute requiredRole="landlord"><LandlordSidebarLayout /></ProtectedRoute>}>
-                <Route path="dashboard" element={<LandlordDashboard />} />
+                <Route path="dashboard" element={<LandlordDashboardPage />} />
                 <Route path="houses" element={<Houses />} />
                 <Route path="houses/upload" element={<HouseUploadForm />} />
                 <Route path="houses/manage" element={<HouseManagementTable />} />

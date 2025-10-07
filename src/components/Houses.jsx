@@ -14,7 +14,7 @@ function AssignCaretakerDropdownInner({ houseId, currentCaretakerId, onAssigned 
     const fetchCaretakers = async () => {
       setLoading(true);
       try {
-        const res = await axios.get("/users/staff");
+        const res = await axios.get("/users/caretakers");
         setCaretakers(res.data.staff || []);
       } catch {
         showToast("⚠️ Failed to load staff", "error");
