@@ -11,34 +11,45 @@ export default function AssignCaretakerDropdown({ houseId, currentCaretakerId, o
   const { token } = useAuth();
 
   useEffect(() => {
-    const fetchCaretakers = async () => {
-      setLoading(true);
+  let isMounted = true; // Prevent updates after unmount
+
+  const fetchCaretakers = async () => {
+    setLoading(true);
+    try {
+      // Primary endpoint
+      const res = await axios.get('/users/staff', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (isMounted) {
+        setCaretakers(res.data.staff || res.data.caretakers || []);
+      }
+    } catch (error) {
+      console.error('Primary failed:', error);
+
+      // Fallback endpoint
       try {
-        // Try primary endpoint first
-        const res = await axios.get('/users/staff', {
+        const res = await axios.get('/users/profile/get', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setCaretakers(res.data.staff || res.data.caretakers || []);
-      } catch (error) {
-        console.error('Failed to fetch from /users/staff:', error);
-        
-        // Fallback: try alternative endpoint
-        try {
-          const res = await axios.get('/users/profile/get', {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+        if (isMounted) {
           setCaretakers(res.data.caretakers || []);
-        } catch (fallbackError) {
-          console.error('Failed to fetch from /users/profile/get:', fallbackError);
-          showToast('Failed to load staff', 'error');
         }
-      } finally {
-        setLoading(false);
+      } catch (fallbackError) {
+        console.error('Fallback failed:', fallbackError);
+        if (isMounted) showToast("Failed to load staff", "error");
       }
-    };
-    
-    fetchCaretakers();
-  }, [showToast, token]);
+    } finally {
+      if (isMounted) setLoading(false);
+    }
+  };
+
+  fetchCaretakers();
+
+  return () => {
+    isMounted = false; // Cleanup
+  };
+}, [token, showToast]);
 
   const assignCaretaker = async () => {
     if (!selected) return;
