@@ -6,22 +6,21 @@ const instance = axios.create({
 });
 
 // Add token from localStorage to every request if it exists
-instance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+// In your axios interceptor
+axios.interceptors.response.use(
+  response => {
+    const remaining = response.headers['x-ratelimit-remaining'];
+    const reset = response.headers['x-ratelimit-reset'];
+    
+    if (remaining < 10) {
+      console.warn(`⚠️ Only ${remaining} requests remaining until ${new Date(reset * 1000)}`);
     }
-    return config;
+    return response;
   },
-  (error) => Promise.reject(error)
-);
-instance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      window.location.href = "/login"; // or use `navigate("/login")` inside context
+  error => {
+    if (error.response?.status === 429) {
+      const retryAfter = error.response.headers['retry-after'];
+      console.error(`Rate limited! Retry after ${retryAfter} seconds`);
     }
     return Promise.reject(error);
   }

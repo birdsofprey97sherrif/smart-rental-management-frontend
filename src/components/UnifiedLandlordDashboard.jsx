@@ -198,15 +198,41 @@ export default function UnifiedLandlordDashboard() {
     fetchLogs();
   }, [fetchLogs]);
 
-  /** Auto-refresh every 30s */
+  /** Auto-refresh - OPTIMIZED to reduce API calls */
   useEffect(() => {
-    const id = setInterval(() => {
-      fetchDashboardStats();
-      fetchLogs();
-      fetchDefaulters();
-    }, 30000);
-    return () => clearInterval(id);
-  }, [fetchDashboardStats, fetchLogs, fetchDefaulters]);
+    // Only auto-refresh if tab is visible and user is active
+    let refreshInterval;
+    
+    const startRefresh = () => {
+      refreshInterval = setInterval(() => {
+        // Only refresh the overview tab (not all tabs)
+        if (activeTab === "overview" && document.visibilityState === 'visible') {
+          fetchDashboardStats();
+          // Fetch logs and defaulters less frequently
+          if (Date.now() % 2 === 0) { // Every 2nd refresh
+            fetchLogs();
+            fetchDefaulters();
+          }
+        }
+      }, 60000); // Changed from 30s to 60s (1 minute)
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        clearInterval(refreshInterval);
+      } else {
+        startRefresh();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    startRefresh();
+
+    return () => {
+      clearInterval(refreshInterval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [activeTab, fetchDashboardStats, fetchLogs, fetchDefaulters]);
 
   /** Derived Data for Charts */
   const chartData = useMemo(() => {
