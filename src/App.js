@@ -56,7 +56,7 @@ import TenantPaymentPage from "./components/TenantPaymentsPage";
 
 // Landlord Components
 import LandlordSidebarLayout from "./components/LandlordSidebarLayout";
-import LandlordDash from "./components/landlordDash";
+//import UnifiedLandlordDashboard from "./components/UnifiedLandlordDashboard";
 import HouseManagementTable from "./components/HouseManagementTable";
 import HouseUploadForm from "./components/HouseUploadForm";
 import TenantManagement from "./components/TenantManagement";
@@ -78,6 +78,7 @@ import CaretakerTenantRegistration from "./components/CaretakerTenantRegistratio
 import CaretakerVisits from "./components/CaretakerVisits";
 import Houses from "./components/Houses";
 import NotFound from "./components/NotFound";
+import UnifiedLandlordDashboard from "./components/UnifiedLandlordDashboard";
 
 
 function App() {
@@ -130,7 +131,7 @@ function App() {
 
               {/* Landlord Routes */}
               <Route path="/landlord"element={<ProtectedRoute requiredRole="landlord"><LandlordSidebarLayout /></ProtectedRoute>}>
-                <Route path="dashboard" element={<LandlordDash />} />
+                <Route path="dashboard" element={<UnifiedLandlordDashboard />} />
                 <Route path="houses" element={<Houses />} />
                 <Route path="houses/upload" element={<HouseUploadForm />} />
                 <Route path="houses/manage" element={<HouseManagementTable />} />
