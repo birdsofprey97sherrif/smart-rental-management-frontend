@@ -5,9 +5,17 @@ const instance = axios.create({
   baseURL: 'https://smart-rental-management.onrender.com/api',
 });
 
-// Add token from localStorage to every request if it exists
-// In your axios interceptor
-axios.interceptors.response.use(
+// Attach token to every request
+instance.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Rate-limit interceptor (attach to instance, not axios)
+instance.interceptors.response.use(
   response => {
     const remaining = response.headers['x-ratelimit-remaining'];
     const reset = response.headers['x-ratelimit-reset'];
