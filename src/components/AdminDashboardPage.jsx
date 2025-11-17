@@ -15,7 +15,7 @@ export default function AdminDashboardPage() {
     try {
       
 
-      const { data } = await axios.get('/admin/analytics', {
+      const { data } = await axios.get('/admin/admin/analytics', {
         
       });
       console.log("Fetched stats:", data);
